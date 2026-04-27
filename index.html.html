@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mutila Kasonkomona — Data Analyst</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --black: #090c0f;
+    --dark: #0e1318;
+    --card: #131a22;
+    --border: #1e2a35;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --white: #f0ece4;
+    --muted: #6b7a8d;
+    --accent: #2a8f6f;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.35;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.4rem 4rem;
+    background: rgba(9,12,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--gold);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 8rem 4rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    right: -10%;
+    top: 10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.4s;
+  }
+
+  .hero-title span {
+    color: var(--gold);
+    display: block;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 420px;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.6s;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.8s;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--black);
+    padding: 0.85rem 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+  .btn-outline {
+    border: 1px solid var(--border);
+    color: var(--white);
+    padding: 0.85rem 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+  /* HERO RIGHT — Stats panel */
+  .hero-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-left: 5rem;
+    opacity: 0;
+    animation: fadeLeft 0.9s ease forwards 1s;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--gold);
+  }
+
+  .stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* SECTION COMMON */
+  section { padding: 6rem 4rem; }
+
+  .section-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.15;
+  }
+
+  .section-line {
+    width: 60px;
+    height: 2px;
+    background: var(--gold);
+    margin-bottom: 3rem;
+  }
+
+  /* SERVICES */
+  #services { background: var(--dark); }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: var(--border);
+  }
+
+  .service-card {
+    background: var(--card);
+    padding: 2.5rem;
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .service-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: left;
+  }
+
+  .service-card:hover { background: #161f2a; }
+  .service-card:hover::after { transform: scaleX(1); }
+
+  .service-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .service-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    color: var(--white);
+  }
+
+  .service-desc {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .service-price {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+
+  /* PROCESS */
+  #process { background: var(--black); }
+
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    counter-reset: step;
+  }
+
+  .process-step {
+    counter-increment: step;
+    position: relative;
+    padding-top: 1rem;
+  }
+
+  .process-step::before {
+    content: counter(step, decimal-leading-zero);
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--border);
+    display: block;
+    margin-bottom: 1rem;
+    line-height: 1;
+  }
+
+  .process-step-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+  }
+
+  .process-step-desc {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* TOOLS */
+  #tools { background: var(--dark); }
+
+  .tools-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .tool-badge {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 0.6rem 1.2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+
+  .tool-badge:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* PORTFOLIO */
+  #portfolio { background: var(--black); }
+
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .portfolio-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2rem 2.5rem;
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative;
+  }
+
+  .portfolio-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-4px);
+  }
+
+  .portfolio-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+  }
+
+  .portfolio-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.7rem;
+  }
+
+  .portfolio-desc {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .portfolio-tools {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .p-tool {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    border: 1px solid rgba(201,168,76,0.25);
+    padding: 0.25rem 0.6rem;
+  }
+
+  .coming-soon {
+    position: absolute;
+    top: 1.2rem; right: 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 0.2rem 0.5rem;
+  }
+
+  /* CONTACT */
+  #contact { background: var(--dark); }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .contact-info p {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+
+  .contact-detail {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--white);
+  }
+
+  .contact-detail-label {
+    color: var(--gold);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    min-width: 70px;
+  }
+
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+
+  .form-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .form-input, .form-textarea {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--white);
+    padding: 0.85rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+    resize: none;
+  }
+
+  .form-input:focus, .form-textarea:focus { border-color: var(--gold); }
+  .form-textarea { min-height: 120px; }
+
+  /* FOOTER */
+  footer {
+    background: var(--black);
+    border-top: 1px solid var(--border);
+    padding: 2rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--gold);
+  }
+
+  .footer-copy {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeLeft {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* DIVIDER LINE */
+  .gold-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.3;
+  }
+
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 7rem 1.5rem 3rem; }
+    .hero-right { padding-left: 0; margin-top: 3rem; }
+    section { padding: 4rem 1.5rem; }
+    .services-grid { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: 1fr 1fr; }
+    .portfolio-grid { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">MK.</div>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">📍 Lusaka, Zambia &nbsp;·&nbsp; Available Remotely</div>
+    <h1 class="hero-title">
+      Data That<br/>
+      <span>Drives Decisions.</span>
+    </h1>
+    <p class="hero-subtitle">
+      I'm Mutila Kasonkomona — a data analyst turning raw business data into clear insights, dashboards, and strategies that actually move the needle.
+    </p>
+    <div class="hero-cta">
+      <a href="#contact" class="btn-primary">Hire Me</a>
+      <a href="#portfolio" class="btn-outline">View Work</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="stat-card">
+      <div class="stat-number">100%</div>
+      <div class="stat-label">Remote & Local Projects</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">48hr</div>
+      <div class="stat-label">Average Delivery Time</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">ZMW</div>
+      <div class="stat-label">Local Pricing Available</div>
+    </div>
+  </div>
+</section>
+
+<div class="gold-divider"></div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-tag">What I Offer</div>
+  <h2 class="section-title reveal">Services</h2>
+  <div class="section-line"></div>
+
+  <div class="services-grid reveal">
+    <div class="service-card">
+      <div class="service-icon">📊</div>
+      <div class="service-name">Data Analysis & Reporting</div>
+      <div class="service-desc">Transform your raw data into clear, actionable reports. Sales trends, performance metrics, customer behaviour — I find what matters.</div>
+      <div class="service-price">From K800 / $30 USD</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📈</div>
+      <div class="service-name">Dashboard Design</div>
+      <div class="service-desc">Interactive dashboards built in Power BI or Tableau that let you monitor your business in real time — no spreadsheet digging required.</div>
+      <div class="service-price">From K2,000 / $75 USD</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🗄️</div>
+      <div class="service-name">Data Cleaning & Processing</div>
+      <div class="service-desc">Messy, incomplete, or duplicated data? I clean, structure, and prepare your datasets so they're ready for any purpose.</div>
+      <div class="service-price">From K500 / $20 USD</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🔍</div>
+      <div class="service-name">Business Intelligence</div>
+      <div class="service-desc">Deep-dive analysis for growing Zambian SMEs. Inventory, revenue, staffing — understand your numbers and plan with confidence.</div>
+      <div class="service-price">From K3,500 / $130 USD</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🐍</div>
+      <div class="service-name">Python & SQL Automation</div>
+      <div class="service-desc">Automate repetitive data tasks. Stop copy-pasting reports manually — I build scripts that do it for you in seconds.</div>
+      <div class="service-price">From K1,500 / $55 USD</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📑</div>
+      <div class="service-name">Survey & Research Analysis</div>
+      <div class="service-desc">NGOs, researchers, and institutions — I analyse your survey data and produce professional reports ready for stakeholders or donors.</div>
+      <div class="service-price">From K1,200 / $45 USD</div>
+    </div>
+  </div>
+</section>
+
+<div class="gold-divider"></div>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-tag">How It Works</div>
+  <h2 class="section-title reveal">Simple Process</h2>
+  <div class="section-line"></div>
+
+  <div class="process-steps reveal">
+    <div class="process-step">
+      <div class="process-step-title">Discovery</div>
+      <div class="process-step-desc">We talk about your data, your goals, and what decisions you need to make. No jargon — just a clear conversation.</div>
+    </div>
+    <div class="process-step">
+      <div class="process-step-title">Proposal</div>
+      <div class="process-step-desc">I send you a clear scope, timeline, and price. You approve and share your data securely.</div>
+    </div>
+    <div class="process-step">
+      <div class="process-step-title">Analysis</div>
+      <div class="process-step-desc">I do the heavy lifting — cleaning, processing, analysing, and visualising your data.</div>
+    </div>
+    <div class="process-step">
+      <div class="process-step-title">Delivery</div>
+      <div class="process-step-desc">You receive a polished report or dashboard with a walkthrough. Revisions included.</div>
+    </div>
+  </div>
+</section>
+
+<div class="gold-divider"></div>
+
+<!-- TOOLS -->
+<section id="tools" style="padding-bottom: 5rem;">
+  <div class="section-tag">My Stack</div>
+  <h2 class="section-title reveal">Tools & Technologies</h2>
+  <div class="section-line"></div>
+
+  <div class="tools-grid reveal">
+    <div class="tool-badge">Python</div>
+    <div class="tool-badge">Pandas</div>
+    <div class="tool-badge">NumPy</div>
+    <div class="tool-badge">Matplotlib</div>
+    <div class="tool-badge">Seaborn</div>
+    <div class="tool-badge">SQL</div>
+    <div class="tool-badge">PostgreSQL</div>
+    <div class="tool-badge">MySQL</div>
+    <div class="tool-badge">Power BI</div>
+    <div class="tool-badge">Tableau</div>
+    <div class="tool-badge">Excel</div>
+    <div class="tool-badge">Google Sheets</div>
+    <div class="tool-badge">Jupyter Notebook</div>
+    <div class="tool-badge">Git & GitHub</div>
+  </div>
+</section>
+
+<div class="gold-divider"></div>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="section-tag">My Work</div>
+  <h2 class="section-title reveal">Portfolio Projects</h2>
+  <div class="section-line"></div>
+
+  <div class="portfolio-grid reveal">
+    <a href="https://CodeWithRas.github.io/zambia-copper-analysis" target="_blank" style="text-decoration:none;color:inherit;">
+    <div class="portfolio-card">
+      <span class="coming-soon" style="background:rgba(42,143,111,0.15);border:1px solid #2a8f6f;color:#2a8f6f;">Live ↗</span>
+      <div class="portfolio-tag">Economic Analysis</div>
+      <div class="portfolio-title">Zambia Copper Export Trends 2010–2024</div>
+      <div class="portfolio-desc">Analysis of Zambia's copper export volumes and revenue over 14 years, exploring the relationship between global copper prices and GDP contribution.</div>
+      <div class="portfolio-tools">
+        <span class="p-tool">Python</span>
+        <span class="p-tool">Pandas</span>
+        <span class="p-tool">Matplotlib</span>
+        <span class="p-tool">World Bank Data</span>
+      </div>
+    </div>
+    </a>
+    <a href="https://CodeWithRas.github.io/lusaka-retail-dashboard" target="_blank" style="text-decoration:none;color:inherit;">
+    <div class="portfolio-card">
+      <span class="coming-soon" style="background:rgba(42,143,111,0.15);border:1px solid #2a8f6f;color:#2a8f6f;">Live ↗</span>
+      <div class="portfolio-tag">Retail Business Intelligence</div>
+      <div class="portfolio-title">Lusaka Retail Sales Dashboard</div>
+      <div class="portfolio-desc">12-month sales analysis for a simulated Lusaka general store — revenue trends, category margins, seasonal patterns, and a full BI dashboard.</div>
+      <div class="portfolio-tools">
+        <span class="p-tool">Python</span>
+        <span class="p-tool">Pandas</span>
+        <span class="p-tool">Matplotlib</span>
+        <span class="p-tool">NumPy</span>
+      </div>
+    </div>
+    </a>
+    <a href="https://CodeWithRas.github.io/zambia-malaria-analysis" target="_blank" style="text-decoration:none;color:inherit;">
+    <div class="portfolio-card">
+      <span class="coming-soon" style="background:rgba(42,143,111,0.15);border:1px solid #2a8f6f;color:#2a8f6f;">Live ↗</span>
+      <div class="portfolio-tag">Public Health</div>
+      <div class="portfolio-title">Zambia Malaria Incidence Analysis</div>
+      <div class="portfolio-desc">Provincial breakdown of malaria incidence across Zambia's 10 provinces using WHO and MOH data, with seasonal trend and under-5 mortality analysis.</div>
+      <div class="portfolio-tools">
+        <span class="p-tool">Python</span>
+        <span class="p-tool">Pandas</span>
+        <span class="p-tool">Matplotlib</span>
+        <span class="p-tool">WHO Data</span>
+      </div>
+    </div>
+    </a>
+    <a href="https://CodeWithRas.github.io/titanic-survival-prediction" target="_blank" style="text-decoration:none;color:inherit;">
+    <div class="portfolio-card">
+      <span class="coming-soon" style="background:rgba(42,143,111,0.15);border:1px solid #2a8f6f;color:#2a8f6f;">Live ↗</span>
+      <div class="portfolio-tag">Machine Learning · Kaggle</div>
+      <div class="portfolio-title">Titanic Survival Prediction</div>
+      <div class="portfolio-desc">Full ML pipeline — EDA, feature engineering, and 5-model comparison. Gradient Boosting achieved 84.7% accuracy predicting passenger survival.</div>
+      <div class="portfolio-tools">
+        <span class="p-tool">Python</span>
+        <span class="p-tool">Scikit-learn</span>
+        <span class="p-tool">Pandas</span>
+        <span class="p-tool">Kaggle</span>
+      </div>
+    </div>
+    </a>
+  </div>
+</section>
+
+<div class="gold-divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-tag">Get In Touch</div>
+  <h2 class="section-title reveal">Let's Work Together</h2>
+  <div class="section-line"></div>
+
+  <div class="contact-grid reveal">
+    <div class="contact-info">
+      <p>Whether you're a Lusaka business wanting to understand your numbers, or a remote client needing a reliable data analyst — I'm available and ready to deliver.</p>
+
+      <div class="contact-detail">
+        <span class="contact-detail-label">Location</span>
+        Lusaka, Zambia
+      </div>
+      <div class="contact-detail">
+        <span class="contact-detail-label">Email</span>
+        officialmutila@gmail.com
+      </div>
+      <div class="contact-detail">
+        <span class="contact-detail-label">WhatsApp</span>
+        +260 972 008 816
+      </div>
+      <div class="contact-detail">
+        <span class="contact-detail-label">Upwork</span>
+        upwork.com/freelancers/mutila
+      </div>
+      <div class="contact-detail">
+        <span class="contact-detail-label">GitHub</span>
+        github.com/CodeWithRas
+      </div>
+      <br/>
+      <div class="contact-detail" style="color: var(--muted); font-size: 0.72rem;">
+        🕐 &nbsp; Response within 24 hours &nbsp;·&nbsp; Remote & Lusaka-based meetings available
+      </div>
+    </div>
+
+    <div class="contact-form">
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input class="form-input" type="text" placeholder="John Banda"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" type="email" placeholder="john@company.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Service Needed</label>
+        <input class="form-input" type="text" placeholder="e.g. Sales Dashboard, Data Cleaning..."/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message</label>
+        <textarea class="form-textarea" placeholder="Tell me about your data and what you're trying to achieve..."></textarea>
+      </div>
+      <button class="btn-primary" style="align-self: flex-start;" onclick="alert('Contact form submitted! (Connect to a backend to make this live)')">Send Message →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-name">Mutila Kasonkomona</div>
+  <div class="footer-copy">© 2025 · Data Analyst · Lusaka, Zambia</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
