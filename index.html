@@ -736,63 +736,77 @@
   <h2 class="section-title reveal">Portfolio Projects</h2>
   <div class="section-line"></div>
 
-  <div class="portfolio-grid reveal">
-    <a href="https://CodeWithRas.github.io/zambia-copper-analysis" target="_blank" style="text-decoration:none;color:inherit;">
+  <!-- Filter tabs -->
+  <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:2rem;">
+    <button class="filter-btn active" onclick="filterProjects('all')">All (7)</button>
+    <button class="filter-btn" onclick="filterProjects('data')">Data Analysis</button>
+    <button class="filter-btn" onclick="filterProjects('research')">Research & NGO</button>
+    <button class="filter-btn" onclick="filterProjects('ml')">Machine Learning</button>
+  </div>
+
+  <div class="portfolio-grid reveal" id="portfolio-grid">
+    <a href="https://CodeWithRas.github.io/zambia-copper-analysis" target="_blank" style="text-decoration:none;color:inherit;" data-cat="data">
     <div class="portfolio-card">
       <span class="coming-soon" style="background:rgba(42,143,111,0.15);border:1px solid #2a8f6f;color:#2a8f6f;">Live ↗</span>
       <div class="portfolio-tag">Economic Analysis</div>
       <div class="portfolio-title">Zambia Copper Export Trends 2010–2024</div>
-      <div class="portfolio-desc">Analysis of Zambia's copper export volumes and revenue over 14 years, exploring the relationship between global copper prices and GDP contribution.</div>
-      <div class="portfolio-tools">
-        <span class="p-tool">Python</span>
-        <span class="p-tool">Pandas</span>
-        <span class="p-tool">Matplotlib</span>
-        <span class="p-tool">World Bank Data</span>
-      </div>
-    </div>
-    </a>
-    <a href="https://CodeWithRas.github.io/lusaka-retail-dashboard" target="_blank" style="text-decoration:none;color:inherit;">
+      <div class="portfolio-desc">14-year analysis of copper export volumes and revenue, exploring how global LME prices drive Zambia's national income.</div>
+      <div class="portfolio-tools"><span class="p-tool">Python</span><span class="p-tool">Pandas</span><span class="p-tool">Matplotlib</span><span class="p-tool">World Bank</span></div>
+    </div></a>
+
+    <a href="https://CodeWithRas.github.io/lusaka-retail-dashboard" target="_blank" style="text-decoration:none;color:inherit;" data-cat="data">
     <div class="portfolio-card">
       <span class="coming-soon" style="background:rgba(42,143,111,0.15);border:1px solid #2a8f6f;color:#2a8f6f;">Live ↗</span>
       <div class="portfolio-tag">Retail Business Intelligence</div>
       <div class="portfolio-title">Lusaka Retail Sales Dashboard</div>
-      <div class="portfolio-desc">12-month sales analysis for a simulated Lusaka general store — revenue trends, category margins, seasonal patterns, and a full BI dashboard.</div>
-      <div class="portfolio-tools">
-        <span class="p-tool">Python</span>
-        <span class="p-tool">Pandas</span>
-        <span class="p-tool">Matplotlib</span>
-        <span class="p-tool">NumPy</span>
-      </div>
-    </div>
-    </a>
-    <a href="https://CodeWithRas.github.io/zambia-malaria-analysis" target="_blank" style="text-decoration:none;color:inherit;">
+      <div class="portfolio-desc">12-month BI dashboard for a Lusaka general store — revenue, margins, seasonal patterns, and day-of-week analysis.</div>
+      <div class="portfolio-tools"><span class="p-tool">Python</span><span class="p-tool">Pandas</span><span class="p-tool">Matplotlib</span><span class="p-tool">NumPy</span></div>
+    </div></a>
+
+    <a href="https://CodeWithRas.github.io/zambia-malaria-analysis" target="_blank" style="text-decoration:none;color:inherit;" data-cat="research">
     <div class="portfolio-card">
       <span class="coming-soon" style="background:rgba(42,143,111,0.15);border:1px solid #2a8f6f;color:#2a8f6f;">Live ↗</span>
       <div class="portfolio-tag">Public Health</div>
       <div class="portfolio-title">Zambia Malaria Incidence Analysis</div>
-      <div class="portfolio-desc">Provincial breakdown of malaria incidence across Zambia's 10 provinces using WHO and MOH data, with seasonal trend and under-5 mortality analysis.</div>
-      <div class="portfolio-tools">
-        <span class="p-tool">Python</span>
-        <span class="p-tool">Pandas</span>
-        <span class="p-tool">Matplotlib</span>
-        <span class="p-tool">WHO Data</span>
-      </div>
-    </div>
-    </a>
-    <a href="https://CodeWithRas.github.io/titanic-survival-prediction" target="_blank" style="text-decoration:none;color:inherit;">
+      <div class="portfolio-desc">Provincial malaria incidence across 10 provinces using WHO and MOH data, with seasonal trends and under-5 mortality analysis.</div>
+      <div class="portfolio-tools"><span class="p-tool">Python</span><span class="p-tool">Pandas</span><span class="p-tool">Matplotlib</span><span class="p-tool">WHO Data</span></div>
+    </div></a>
+
+    <a href="https://CodeWithRas.github.io/titanic-survival-prediction" target="_blank" style="text-decoration:none;color:inherit;" data-cat="ml">
     <div class="portfolio-card">
       <span class="coming-soon" style="background:rgba(42,143,111,0.15);border:1px solid #2a8f6f;color:#2a8f6f;">Live ↗</span>
       <div class="portfolio-tag">Machine Learning · Kaggle</div>
       <div class="portfolio-title">Titanic Survival Prediction</div>
-      <div class="portfolio-desc">Full ML pipeline — EDA, feature engineering, and 5-model comparison. Gradient Boosting achieved 84.7% accuracy predicting passenger survival.</div>
-      <div class="portfolio-tools">
-        <span class="p-tool">Python</span>
-        <span class="p-tool">Scikit-learn</span>
-        <span class="p-tool">Pandas</span>
-        <span class="p-tool">Kaggle</span>
-      </div>
-    </div>
-    </a>
+      <div class="portfolio-desc">Full ML pipeline — EDA, feature engineering, and 5-model comparison. Gradient Boosting achieved 84.7% accuracy.</div>
+      <div class="portfolio-tools"><span class="p-tool">Python</span><span class="p-tool">Scikit-learn</span><span class="p-tool">Pandas</span><span class="p-tool">Kaggle</span></div>
+    </div></a>
+
+    <a href="https://CodeWithRas.github.io/zambia-survey-cleaning" target="_blank" style="text-decoration:none;color:inherit;" data-cat="research">
+    <div class="portfolio-card">
+      <span class="coming-soon" style="background:rgba(42,143,111,0.15);border:1px solid #2a8f6f;color:#2a8f6f;">Live ↗</span>
+      <div class="portfolio-tag">Survey Data · KoBoToolbox</div>
+      <div class="portfolio-title">Zambia Household Survey Data Cleaning</div>
+      <div class="portfolio-desc">Full KoBoToolbox data cleaning pipeline — 535 raw records cleaned to 500, fixing duplicates, invalid values, and inconsistent formats across 10 provinces.</div>
+      <div class="portfolio-tools"><span class="p-tool">Python</span><span class="p-tool">Pandas</span><span class="p-tool">KoBoToolbox</span><span class="p-tool">NumPy</span></div>
+    </div></a>
+
+    <a href="https://CodeWithRas.github.io/zambia-me-dashboard" target="_blank" style="text-decoration:none;color:inherit;" data-cat="research">
+    <div class="portfolio-card">
+      <span class="coming-soon" style="background:rgba(42,143,111,0.15);border:1px solid #2a8f6f;color:#2a8f6f;">Live ↗</span>
+      <div class="portfolio-tag">NGO · M&E · USAID</div>
+      <div class="portfolio-title">Zambia Nutrition Programme M&E Dashboard</div>
+      <div class="portfolio-desc">USAID-funded programme M&E dashboard tracking 4 KPIs across 6 quarters, 5 provinces — targets vs actuals, budget utilisation, and outcome indicators.</div>
+      <div class="portfolio-tools"><span class="p-tool">Python</span><span class="p-tool">Pandas</span><span class="p-tool">M&E</span><span class="p-tool">Matplotlib</span></div>
+    </div></a>
+
+    <a href="https://CodeWithRas.github.io/zambia-field-research" target="_blank" style="text-decoration:none;color:inherit;" data-cat="research">
+    <div class="portfolio-card">
+      <span class="coming-soon" style="background:rgba(42,143,111,0.15);border:1px solid #2a8f6f;color:#2a8f6f;">Live ↗</span>
+      <div class="portfolio-tag">Field Research · Agricultural Economics</div>
+      <div class="portfolio-title">Zambia Smallholder Farmer Income Study</div>
+      <div class="portfolio-desc">600-household field research report across 5 provinces — analysing the impact of irrigation, fertilizer, education, and crop choice on household income.</div>
+      <div class="portfolio-tools"><span class="p-tool">Python</span><span class="p-tool">Pandas</span><span class="p-tool">Statistics</span><span class="p-tool">Matplotlib</span></div>
+    </div></a>
   </div>
 </section>
 
