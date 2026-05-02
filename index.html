@@ -438,7 +438,23 @@
     padding: 0.25rem 0.6rem;
   }
 
-  .coming-soon {
+  .filter-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 0.45rem 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(201,168,76,0.08);
+  }
     position: absolute;
     top: 1.2rem; right: 1.5rem;
     font-family: 'DM Mono', monospace;
@@ -738,7 +754,7 @@
 
   <!-- Filter tabs -->
   <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:2rem;">
-    <button class="filter-btn active" onclick="filterProjects('all')">All (7)</button>
+    <button class="filter-btn active" onclick="filterProjects('all')">All (9)</button>
     <button class="filter-btn" onclick="filterProjects('data')">Data Analysis</button>
     <button class="filter-btn" onclick="filterProjects('research')">Research & NGO</button>
     <button class="filter-btn" onclick="filterProjects('ml')">Machine Learning</button>
@@ -799,13 +815,22 @@
       <div class="portfolio-tools"><span class="p-tool">Python</span><span class="p-tool">Pandas</span><span class="p-tool">M&E</span><span class="p-tool">Matplotlib</span></div>
     </div></a>
 
-    <a href="https://CodeWithRas.github.io/zambia-field-research" target="_blank" style="text-decoration:none;color:inherit;" data-cat="research">
+    <a href="https://CodeWithRas.github.io/zambia-digital-inclusion" target="_blank" style="text-decoration:none;color:inherit;" data-cat="research">
     <div class="portfolio-card">
       <span class="coming-soon" style="background:rgba(42,143,111,0.15);border:1px solid #2a8f6f;color:#2a8f6f;">Live ↗</span>
-      <div class="portfolio-tag">Field Research · Agricultural Economics</div>
-      <div class="portfolio-title">Zambia Smallholder Farmer Income Study</div>
-      <div class="portfolio-desc">600-household field research report across 5 provinces — analysing the impact of irrigation, fertilizer, education, and crop choice on household income.</div>
-      <div class="portfolio-tools"><span class="p-tool">Python</span><span class="p-tool">Pandas</span><span class="p-tool">Statistics</span><span class="p-tool">Matplotlib</span></div>
+      <div class="portfolio-tag">Digital Finance · FinTech · 2024</div>
+      <div class="portfolio-title">Zambia Digital Financial Inclusion Study 2024</div>
+      <div class="portfolio-desc">Mobile money, banking and digital access across 800 respondents in 10 provinces — provider market share, urban-rural gap, adoption barriers, and a full inclusion heatmap.</div>
+      <div class="portfolio-tools"><span class="p-tool">Python</span><span class="p-tool">Pandas</span><span class="p-tool">FSD Zambia</span><span class="p-tool">UNCDF</span></div>
+    </div></a>
+
+    <a href="https://CodeWithRas.github.io/zambia-vaccination-coverage" target="_blank" style="text-decoration:none;color:inherit;" data-cat="research">
+    <div class="portfolio-card">
+      <span class="coming-soon" style="background:rgba(42,143,111,0.15);border:1px solid #2a8f6f;color:#2a8f6f;">Live ↗</span>
+      <div class="portfolio-tag">Public Health · Immunisation · 2024</div>
+      <div class="portfolio-title">Zambia Child Vaccination Coverage Analysis 2024</div>
+      <div class="portfolio-desc">Provincial immunisation rates across 8 antigens for 1,200 children under 5 — COVID disruption trends, MCV dropout gap, dropout causes, and facility birth effect. MOH/WHO aligned.</div>
+      <div class="portfolio-tools"><span class="p-tool">Python</span><span class="p-tool">Pandas</span><span class="p-tool">WHO Data</span><span class="p-tool">MOH Zambia</span></div>
     </div></a>
   </div>
 </section>
@@ -849,23 +874,28 @@
     </div>
 
     <div class="contact-form">
-      <div class="form-group">
-        <label class="form-label">Your Name</label>
-        <input class="form-input" type="text" placeholder="John Banda"/>
+      <div id="form-success" style="display:none;background:rgba(42,143,111,0.15);border:1px solid #2a8f6f;padding:1.2rem 1.5rem;margin-bottom:1rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.8rem;color:#2a8f6f;">✓ Message sent! I'll get back to you within 24 hours.</div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Email Address</label>
-        <input class="form-input" type="email" placeholder="john@company.com"/>
+      <div id="form-fields">
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input class="form-input" id="f-name" type="text" placeholder="John Banda"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" id="f-email" type="email" placeholder="john@company.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Service Needed</label>
+          <input class="form-input" id="f-service" type="text" placeholder="e.g. Sales Dashboard, Data Cleaning..."/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" id="f-message" placeholder="Tell me about your data and what you're trying to achieve..."></textarea>
+        </div>
+        <button class="btn-primary" id="submit-btn" style="align-self:flex-start;" onclick="submitForm()">Send Message →</button>
       </div>
-      <div class="form-group">
-        <label class="form-label">Service Needed</label>
-        <input class="form-input" type="text" placeholder="e.g. Sales Dashboard, Data Cleaning..."/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Message</label>
-        <textarea class="form-textarea" placeholder="Tell me about your data and what you're trying to achieve..."></textarea>
-      </div>
-      <button class="btn-primary" style="align-self: flex-start;" onclick="alert('Contact form submitted! (Connect to a backend to make this live)')">Send Message →</button>
     </div>
   </div>
 </section>
@@ -877,6 +907,37 @@
 </footer>
 
 <script>
+  // Live contact form via Formspree
+  async function submitForm() {
+    const btn  = document.getElementById('submit-btn');
+    const name = document.getElementById('f-name').value.trim();
+    const email= document.getElementById('f-email').value.trim();
+    const svc  = document.getElementById('f-service').value.trim();
+    const msg  = document.getElementById('f-message').value.trim();
+    if (!name || !email || !msg) { alert('Please fill in your name, email, and message.'); return; }
+    btn.textContent = 'Sending...'; btn.disabled = true;
+    try {
+      const res = await fetch('https://formspree.io/f/officialmutila@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ name, email, service: svc, message: msg })
+      });
+      if (res.ok) {
+        document.getElementById('form-fields').style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+      } else { btn.textContent = 'Send Message →'; btn.disabled = false; alert('Something went wrong. Please email me directly at officialmutila@gmail.com'); }
+    } catch(e) { btn.textContent = 'Send Message →'; btn.disabled = false; alert('Connection error. Please email me directly at officialmutila@gmail.com'); }
+  }
+
+  // Portfolio filter
+  function filterProjects(cat) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.querySelectorAll('#portfolio-grid a').forEach(card => {
+      card.style.display = (cat === 'all' || card.dataset.cat === cat) ? 'block' : 'none';
+    });
+  }
+
   // Scroll reveal
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
