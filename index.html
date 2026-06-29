@@ -975,7 +975,266 @@
 </footer>
 
 <script>
-  // Live contact form via Formspree
+  // ── CUSTOM CURSOR ──────────────────────────────────────────────────────────
+  const cursorDot  = document.createElement('div');
+  cursorDot.id     = 'cursor-dot';
+  document.body.appendChild(cursorDot);
+
+  document.addEventListener('mousemove', e => {
+    cursorDot.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+  });
+
+  // Cursor states
+  document.querySelectorAll('a, button, .portfolio-card, .service-card, .tool-badge, .nav-links a').forEach(el => {
+    el.addEventListener('mouseenter', () => cursorDot.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave', () => cursorDot.classList.remove('cursor-hover'));
+  });
+
+  // ── PARTICLE CANVAS (hero background) ─────────────────────────────────────
+  const canvas = document.createElement('canvas');
+  canvas.id = 'particles';
+  canvas.style.cssText = `
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    pointer-events:none;opacity:0.35;z-index:0;
+  `;
+  const heroEl = document.querySelector('.hero');
+  if (heroEl) { heroEl.style.position='relative'; heroEl.insertBefore(canvas, heroEl.firstChild); }
+
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+
+  function resizeCanvas() {
+    canvas.width  = heroEl.offsetWidth;
+    canvas.height = heroEl.offsetHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  class Particle {
+    constructor() { this.reset(); }
+    reset() {
+      this.x    = Math.random() * canvas.width;
+      this.y    = Math.random() * canvas.height;
+      this.size = Math.random() * 1.5 + 0.3;
+      this.speedX = (Math.random() - 0.5) * 0.4;
+      this.speedY = (Math.random() - 0.5) * 0.4;
+      this.opacity = Math.random() * 0.6 + 0.2;
+      this.color = Math.random() > 0.7 ? '#c9a84c' : '#2a8f6f';
+    }
+    update() {
+      this.x += this.speedX; this.y += this.speedY;
+      if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.globalAlpha = this.opacity;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+  // Connect nearby particles with lines
+  function connectParticles() {
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i+1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 100) {
+          ctx.beginPath();
+          ctx.strokeStyle = '#c9a84c';
+          ctx.globalAlpha = (1 - dist/100) * 0.12;
+          ctx.lineWidth = 0.5;
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+      }
+    }
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => { p.update(); p.draw(); });
+    connectParticles();
+    requestAnimationFrame(animateParticles);
+  }
+  animateParticles();
+
+  // ── TYPING ANIMATION (hero subtitle) ──────────────────────────────────────
+  const roles = [
+    "Data Analyst.",
+    "Business Intelligence Specialist.",
+    "Research Data Expert.",
+    "Banking & Insurance Analyst.",
+    "Python Developer.",
+  ];
+  const subtitleEl = document.querySelector('.hero-subtitle');
+  if (subtitleEl) {
+    const baseText = "I'm Mutila Kasonkomona — ";
+    let roleIndex = 0, charIndex = 0, deleting = false;
+
+    function typeRole() {
+      const currentRole = roles[roleIndex];
+      if (!deleting) {
+        charIndex++;
+        subtitleEl.innerHTML = baseText + '<span style="color:var(--gold);border-right:2px solid var(--gold);padding-right:2px">' + currentRole.slice(0, charIndex) + '</span><br/><br/>Turning raw data into decisions that move businesses forward.';
+        if (charIndex === currentRole.length) {
+          deleting = true;
+          setTimeout(typeRole, 1800);
+          return;
+        }
+      } else {
+        charIndex--;
+        subtitleEl.innerHTML = baseText + '<span style="color:var(--gold);border-right:2px solid var(--gold);padding-right:2px">' + currentRole.slice(0, charIndex) + '</span><br/><br/>Turning raw data into decisions that move businesses forward.';
+        if (charIndex === 0) {
+          deleting = false;
+          roleIndex = (roleIndex + 1) % roles.length;
+        }
+      }
+      setTimeout(typeRole, deleting ? 40 : 75);
+    }
+    setTimeout(typeRole, 1200);
+  }
+
+  // ── ANIMATED COUNTERS (stat cards) ────────────────────────────────────────
+  function animateCounter(el, target, suffix='', prefix='') {
+    let current = 0;
+    const increment = target / 60;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) { current = target; clearInterval(timer); }
+      el.textContent = prefix + Math.round(current) + suffix;
+    }, 20);
+  }
+
+  const statCards = document.querySelectorAll('.stat-card');
+  const statObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const numEl = entry.target.querySelector('.stat-number');
+        if (!numEl || numEl.dataset.animated) return;
+        numEl.dataset.animated = true;
+        const text = numEl.textContent.trim();
+        if (text === '100%') animateCounter(numEl, 100, '%');
+        else if (text === '48hr') { numEl.textContent = '48hr'; }
+        else if (text === 'ZMW') { numEl.textContent = 'ZMW'; }
+        statObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  statCards.forEach(c => statObserver.observe(c));
+
+  // ── TILT EFFECT on portfolio cards ────────────────────────────────────────
+  document.querySelectorAll('.portfolio-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect   = card.getBoundingClientRect();
+      const x      = e.clientX - rect.left;
+      const y      = e.clientY - rect.top;
+      const midX   = rect.width / 2;
+      const midY   = rect.height / 2;
+      const rotateX = ((y - midY) / midY) * -6;
+      const rotateY = ((x - midX) / midX) * 6;
+      card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
+      card.style.transition = 'transform 0.1s ease';
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) translateY(0)';
+      card.style.transition = 'transform 0.5s ease';
+    });
+  });
+
+  // ── MAGNETIC EFFECT on primary buttons ────────────────────────────────────
+  document.querySelectorAll('.btn-primary, .btn-outline').forEach(btn => {
+    btn.addEventListener('mousemove', e => {
+      const rect = btn.getBoundingClientRect();
+      const x    = e.clientX - rect.left - rect.width/2;
+      const y    = e.clientY - rect.top  - rect.height/2;
+      btn.style.transform = `translate(${x * 0.25}px, ${y * 0.25}px)`;
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = 'translate(0,0)';
+      btn.style.transition = 'transform 0.4s ease';
+    });
+  });
+
+  // ── GLOWING HOVER on tool badges ──────────────────────────────────────────
+  document.querySelectorAll('.tool-badge').forEach(badge => {
+    badge.addEventListener('mouseenter', () => {
+      badge.style.boxShadow = '0 0 14px rgba(201,168,76,0.35)';
+      badge.style.transition = 'all 0.2s ease';
+    });
+    badge.addEventListener('mouseleave', () => {
+      badge.style.boxShadow = 'none';
+    });
+  });
+
+  // ── ACTIVE NAV LINK on scroll ─────────────────────────────────────────────
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 120) current = sec.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#'+current ? 'var(--gold)' : '';
+    });
+  });
+
+  // ── SCROLL PROGRESS BAR ────────────────────────────────────────────────────
+  const progressBar = document.createElement('div');
+  progressBar.style.cssText = `
+    position:fixed;top:0;left:0;height:2px;width:0%;
+    background:linear-gradient(90deg,var(--gold),var(--accent));
+    z-index:9998;transition:width 0.1s linear;
+  `;
+  document.body.appendChild(progressBar);
+  window.addEventListener('scroll', () => {
+    const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+    progressBar.style.width = pct + '%';
+  });
+
+  // ── RIPPLE EFFECT on buttons ───────────────────────────────────────────────
+  document.querySelectorAll('.btn-primary').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      const ripple = document.createElement('span');
+      const rect   = this.getBoundingClientRect();
+      const size   = Math.max(rect.width, rect.height);
+      ripple.style.cssText = `
+        position:absolute;border-radius:50%;
+        width:${size}px;height:${size}px;
+        left:${e.clientX - rect.left - size/2}px;
+        top:${e.clientY - rect.top  - size/2}px;
+        background:rgba(255,255,255,0.25);
+        transform:scale(0);animation:ripple 0.5s linear;
+        pointer-events:none;
+      `;
+      this.style.position='relative';this.style.overflow='hidden';
+      this.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 500);
+    });
+  });
+
+  // ── SERVICE CARD SPOTLIGHT ─────────────────────────────────────────────────
+  document.querySelectorAll('.service-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x    = e.clientX - rect.left;
+      const y    = e.clientY - rect.top;
+      card.style.background = `radial-gradient(circle at ${x}px ${y}px, #1a2535 0%, #131a22 60%)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.background = '';
+    });
+  });
+
+  // ── LIVE CONTACT form via Formspree ───────────────────────────────────────
   async function submitForm() {
     const btn  = document.getElementById('submit-btn');
     const name = document.getElementById('f-name').value.trim();
@@ -997,16 +1256,21 @@
     } catch(e) { btn.textContent = 'Send Message →'; btn.disabled = false; alert('Connection error. Please email me directly at officialmutila@gmail.com'); }
   }
 
-  // Portfolio filter
+  // ── PORTFOLIO FILTER ───────────────────────────────────────────────────────
   function filterProjects(cat) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     event.target.classList.add('active');
     document.querySelectorAll('#portfolio-grid a').forEach(card => {
-      card.style.display = (cat === 'all' || card.dataset.cat === cat) ? 'block' : 'none';
+      if (cat === 'all' || card.dataset.cat === cat) {
+        card.style.display = 'block';
+        card.style.animation = 'fadeUp 0.4s ease forwards';
+      } else {
+        card.style.display = 'none';
+      }
     });
   }
 
-  // Scroll reveal
+  // ── SCROLL REVEAL ──────────────────────────────────────────────────────────
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
@@ -1016,7 +1280,186 @@
     });
   }, { threshold: 0.1 });
   reveals.forEach(el => observer.observe(el));
+
 </script>
+
+<style>
+  /* ── CURSOR ─────────────────────────────────────────────────────────────── */
+  #cursor-ring {
+    position: fixed; top: -20px; left: -20px;
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid rgba(201,168,76,0.6);
+    pointer-events: none; z-index: 99999;
+    transition: width 0.3s, height 0.3s, border-color 0.3s, background 0.3s;
+    margin: -18px 0 0 -18px;
+  }
+  #cursor-dot {
+    position: fixed; top: -3px; left: -3px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gold); pointer-events: none;
+    z-index: 99999; margin: -3px 0 0 -3px;
+    transition: transform 0.08s ease, background 0.2s;
+  }
+  #cursor-ring.cursor-hover {
+    width: 56px; height: 56px; margin: -28px 0 0 -28px;
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.06);
+  }
+  #cursor-dot.cursor-hover { background: var(--gold-light); transform: scale(1.5); }
+
+  /* ── RIPPLE KEYFRAME ─────────────────────────────────────────────────────── */
+  @keyframes ripple {
+    to { transform: scale(2.5); opacity: 0; }
+  }
+
+  /* ── NAV LOGO GLOW ──────────────────────────────────────────────────────── */
+  .nav-logo {
+    cursor: pointer;
+    transition: text-shadow 0.3s;
+  }
+  .nav-logo:hover {
+    text-shadow: 0 0 20px rgba(201,168,76,0.5);
+  }
+
+  /* ── HERO STAT CARDS — shimmer on hover ─────────────────────────────────── */
+  .stat-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+  }
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -60%;
+    width: 40%; height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.08), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+  }
+  .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(201,168,76,0.12); }
+  .stat-card:hover::after { left: 160%; }
+
+  /* ── SECTION TITLE — underline animate ──────────────────────────────────── */
+  .section-line {
+    transition: width 0.8s ease;
+  }
+  .reveal.visible ~ .section-line,
+  .section-title.visible ~ .section-line { width: 120px; }
+
+  /* ── PORTFOLIO CARD — enhanced hover ─────────────────────────────────────── */
+  .portfolio-card {
+    transition: transform 0.5s ease, border-color 0.3s, box-shadow 0.3s;
+    will-change: transform;
+  }
+  .portfolio-card:hover {
+    border-color: var(--gold) !important;
+    box-shadow: 0 12px 40px rgba(201,168,76,0.12);
+  }
+  .p-tool {
+    transition: all 0.2s ease;
+  }
+  .portfolio-card:hover .p-tool {
+    border-color: rgba(201,168,76,0.5);
+    color: var(--gold-light);
+  }
+  .portfolio-title {
+    transition: color 0.2s ease;
+  }
+  .portfolio-card:hover .portfolio-title {
+    color: var(--gold);
+  }
+
+  /* ── SERVICE CARD — enhanced ─────────────────────────────────────────────── */
+  .service-card {
+    cursor: default;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .service-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+  }
+  .service-icon {
+    transition: transform 0.3s ease;
+    display: inline-block;
+  }
+  .service-card:hover .service-icon {
+    transform: scale(1.2) rotate(-5deg);
+  }
+
+  /* ── TOOL BADGE — hover glow ─────────────────────────────────────────────── */
+  .tool-badge {
+    transition: all 0.2s ease;
+    cursor: default;
+  }
+  .tool-badge:hover {
+    transform: translateY(-2px);
+    border-color: var(--gold) !important;
+    color: var(--gold) !important;
+  }
+
+  /* ── CONTACT DETAIL — hover highlight ───────────────────────────────────── */
+  .contact-detail {
+    transition: color 0.2s, padding-left 0.2s;
+    cursor: default;
+  }
+  .contact-detail:hover {
+    color: var(--gold);
+    padding-left: 6px;
+  }
+
+  /* ── FORM INPUTS — focus glow ────────────────────────────────────────────── */
+  .form-input:focus, .form-textarea:focus {
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.08);
+    outline: none;
+  }
+
+  /* ── FOOTER — hover name glow ────────────────────────────────────────────── */
+  .footer-name {
+    transition: text-shadow 0.3s, color 0.3s;
+    cursor: default;
+  }
+  .footer-name:hover {
+    text-shadow: 0 0 20px rgba(201,168,76,0.4);
+    color: var(--gold);
+  }
+
+  /* ── PROCESS STEP — hover counter color ─────────────────────────────────── */
+  .process-step {
+    transition: transform 0.3s ease;
+    cursor: default;
+  }
+  .process-step:hover { transform: translateX(6px); }
+  .process-step:hover::before { color: rgba(201,168,76,0.4); }
+
+  /* ── GOLD DIVIDER — pulse ────────────────────────────────────────────────── */
+  .gold-divider {
+    animation: pulse-divider 4s ease-in-out infinite;
+  }
+  @keyframes pulse-divider {
+    0%, 100% { opacity: 0.3; }
+    50%       { opacity: 0.6; }
+  }
+
+  /* ── FILTER BUTTONS ───────────────────────────────────────────────────────── */
+  .filter-btn {
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .filter-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(201,168,76,0.08);
+    transform: scaleX(0);
+    transition: transform 0.25s ease;
+    transform-origin: left;
+  }
+  .filter-btn:hover::after { transform: scaleX(1); }
+
+  /* ── HERO CONTENT above canvas ───────────────────────────────────────────── */
+  .hero-left, .hero-right { position: relative; z-index: 1; }
+</style>
 
 </body>
 </html>
