@@ -975,20 +975,7 @@
 </footer>
 
 <script>
-  // ── CUSTOM CURSOR ──────────────────────────────────────────────────────────
-  const cursorDot  = document.createElement('div');
-  cursorDot.id     = 'cursor-dot';
-  document.body.appendChild(cursorDot);
-
-  document.addEventListener('mousemove', e => {
-    cursorDot.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-  });
-
-  // Cursor states
-  document.querySelectorAll('a, button, .portfolio-card, .service-card, .tool-badge, .nav-links a').forEach(el => {
-    el.addEventListener('mouseenter', () => cursorDot.classList.add('cursor-hover'));
-    el.addEventListener('mouseleave', () => cursorDot.classList.remove('cursor-hover'));
-  });
+  // (custom cursor removed)
 
   // ── PARTICLE CANVAS (hero background) ─────────────────────────────────────
   const canvas = document.createElement('canvas');
@@ -1284,28 +1271,7 @@
 </script>
 
 <style>
-  /* ── CURSOR ─────────────────────────────────────────────────────────────── */
-  #cursor-ring {
-    position: fixed; top: -20px; left: -20px;
-    width: 36px; height: 36px; border-radius: 50%;
-    border: 1.5px solid rgba(201,168,76,0.6);
-    pointer-events: none; z-index: 99999;
-    transition: width 0.3s, height 0.3s, border-color 0.3s, background 0.3s;
-    margin: -18px 0 0 -18px;
-  }
-  #cursor-dot {
-    position: fixed; top: -3px; left: -3px;
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--gold); pointer-events: none;
-    z-index: 99999; margin: -3px 0 0 -3px;
-    transition: transform 0.08s ease, background 0.2s;
-  }
-  #cursor-ring.cursor-hover {
-    width: 56px; height: 56px; margin: -28px 0 0 -28px;
-    border-color: var(--gold);
-    background: rgba(201,168,76,0.06);
-  }
-  #cursor-dot.cursor-hover { background: var(--gold-light); transform: scale(1.5); }
+
 
   /* ── RIPPLE KEYFRAME ─────────────────────────────────────────────────────── */
   @keyframes ripple {
